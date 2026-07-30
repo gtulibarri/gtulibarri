@@ -1,6 +1,6 @@
 ---
 date: '2026-07-29T19:13:58-05:00'
-draft: true
+draft: false
 title: 'Tech Debt, Downtime, and Making Things'
 ---
 
