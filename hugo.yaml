@@ -1,11 +1,11 @@
-baseURL: https://gtulibarri.github.io/
+baseURL: "https://gtulibarri.github.io/"
 locale: en-us
 title: Tyler Ulibarri | Infrastructure Systems Engineer
 theme: "PaperMod"
 
 params:
   env: "production"
-  title: "Tyler's Toyhouse"
+  title: "Tyler's Technical Tantrums"
   description: "Thoughts, musings, and ramblings on IT, infrastructure, tech debt, and information technology leadership."
   theme: "auto"
   ShowReadingTime: true
