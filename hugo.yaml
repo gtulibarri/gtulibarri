@@ -1,0 +1,25 @@
+baseURL: https://gtulibarri.github.io/
+locale: en-us
+title: Tyler Ulibarri | Infrastructure Systems Engineer
+theme: "PaperMod"
+
+params:
+  env: "production"
+  title: "Tyler's Toyhouse"
+  description: "Thoughts, musings, and ramblings on IT, infrastructure, tech debt, and information technology leadership."
+  theme: "auto"
+  ShowReadingTime: true
+  ShowShareButton: false
+  ShowPostNavLinks: true
+
+  homeInfoParams:
+    Title: "Hello there."
+    Content: "Senior IT Infrastructure Engineer, writing about clouds, connectivity, systems design, technical debt, and always fighting for the user."
+
+  socialIcons:
+    - name: "linkedin"
+      url: https://www.linkedin.com/in/gtulibarri/
+    - name: "github"
+      url: "https://github.com/gtulibarri"
+    - name: "email"
+      url: "mailto:tulibarri@pm.me"

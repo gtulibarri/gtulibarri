@@ -1,0 +1,24 @@
+---
+date: '2026-07-29T19:13:58-05:00'
+draft: true
+title: 'Tech Debt, Downtime, and Making Things'
+---
+
+In 15 years of work in information technology, I've inherited my fair share of baffling decisions. Here's the thing, though: wild, confusing, and even downright **borked** configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I'm sure I've left plenty of head-scratching moments for my successors. That hospital's network was a mess when I got there, and only *less* of one when I left. I'm sure there are routes I've put in that certainly go nowhere now, or there was that time I filled switchport descriptions with **FIX THIS LATER YOU SCRUB!!!**. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and *that* was a small miracle. But why?
+
+## We Make Things Here!!
+
+Well, not all of us. But the industry that I work in is, well, industrial manufacturing. One of the most *interesting* directors I've seen, who himself was a baffling decision engine, once said in a Teams call, "**We make things here.** Somebody get out to that site and get this working."
+
+Well, duh we make things. Or we enable patient care. Or we let research partners collaborate on life-changing research in real time. We know this intrinsically, though we often feel a significant disconnect. The worst part about what this guy said was that it's a valuable thing to remember, but he couched it in an absolute failure of management. In his hot-headed desire to keep uptime as up as up could be (he was helping the private equity firm prepare the company for sale), he ran long-term fixes and best practice through a meatgrinder of breakfix, heroic panic, and duct tape. Every decision was one that seemed to intentionally avoid 5 minutes of extra work to create days of productivity later. It was *maddening*. 
+
+But, as it turned out, even *his* seemingly wild ramblings had a purpose. That purpose simply wasn't aligned with ours. We wanted a functional system that let the company produce as much profit as it could while maintaining a supportable, resilient security posture and setting trends for best practice. He wanted us to *look* like we were compliant with regulations so that we could be sold. Of course, he couldn't *tell* us that, so, as so often happens in business, we were flying in the dark.
+
+That's not to say I think he was *right*, or even a good director. On the contrary, I found that, because the purpose of his decisions was never made known to us, his decisions were misaligned with both engineering *and* business goals. But, his decisions *did* have an internal logic. Not good logic, but logic, and logic can be worked out. We often forget to do that in our day to day jobs.
+
+## But **I'm** Here to Fix Things
+How do I approach fixing this? Well, part of it is a people problem, the sort of thing I call a 'meat space' issue, rather than a 'cyber space' issue. We have to treat that one with care, teasing apart underlying personal needs carefully. Business needs are a little bit easier. Hopefully you've got SLAs. If not, it's important to buy yourself some goodwill with small changes, little improvements to the business's day to day. As you do this, you'll earn the respect of not just your manager, but the company writ large. When you put in a request to correct a static route that forces traffic to cross two timezones just to return to where it started, or a 'functional' firewall rule that's sinkholing a suspicious number of Windows Update MSIs, the business will trust that you've done your research.
+
+And **do** that research. Practice your project management skills, write up that document, and no matter how trivial you think that change is, give it the step-by-step treatment to the best of your ability. If you start calling the change 'trivial,' you're silencing anyone who might have questions. Even managers who come from a technical background might see huge swaths of what you do as space wizardry. If you write up enough of these well, and get good at it, then even when you're being a space wizard, the folks catching the glow off your 100Gbps backbone links will assume, rightly, that you know what you're doing. The questions will be less pointed, the trust will be high, and even when you make a mistake, you'll have the goodwill to keep moving forward. After all, even space wizards get a command wrong sometimes. 
+
+"The job got done, and nobody died," is the bare minimum, but you can do so much better. Until next time, stay humble, and may your SLAs be ever un-breached.

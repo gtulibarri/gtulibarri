@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Tech Debt, Downtime, and Making Things | Tyler Ulibarri | Infrastructure Systems Engineer</title>
+<meta name="keywords" content="">
+<meta name="description" content="In 15 years of work in information technology, I&rsquo;ve inherited my fair share of baffling decisions. Here&rsquo;s the thing, though: wild, confusing, and even downright borked configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I&rsquo;m sure I&rsquo;ve left plenty of head-scratching moments for my successors. That hospital&rsquo;s network was a mess when I got there, and only less of one when I left. I&rsquo;m sure there are routes I&rsquo;ve put in that certainly go nowhere now, or there was that time I filled switchport descriptions with FIX THIS LATER YOU SCRUB!!!. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and that was a small miracle. But why?">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/tech-downtime-making/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.cd9298b33628769aa1bc1acebbbfd7aa11ce81dfe03484d479e1907760249a1d.css" integrity="sha256-zZKYszYodpqhvBrOu7/XqhHOgd/gNITUeeGQd2Akmh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/tech-downtime-making/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="http://localhost:1313/posts/tech-downtime-making/">
+  <meta property="og:site_name" content="Tyler Ulibarri | Infrastructure Systems Engineer">
+  <meta property="og:title" content="Tech Debt, Downtime, and Making Things">
+  <meta property="og:description" content="In 15 years of work in information technology, I’ve inherited my fair share of baffling decisions. Here’s the thing, though: wild, confusing, and even downright borked configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I’m sure I’ve left plenty of head-scratching moments for my successors. That hospital’s network was a mess when I got there, and only less of one when I left. I’m sure there are routes I’ve put in that certainly go nowhere now, or there was that time I filled switchport descriptions with FIX THIS LATER YOU SCRUB!!!. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and that was a small miracle. But why?">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-07-29T19:13:58-05:00">
+    <meta property="article:modified_time" content="2026-07-29T19:13:58-05:00">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Tech Debt, Downtime, and Making Things">
+  <meta name="twitter:description" content="In 15 years of work in information technology, I’ve inherited my fair share of baffling decisions. Here’s the thing, though: wild, confusing, and even downright borked configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I’m sure I’ve left plenty of head-scratching moments for my successors. That hospital’s network was a mess when I got there, and only less of one when I left. I’m sure there are routes I’ve put in that certainly go nowhere now, or there was that time I filled switchport descriptions with FIX THIS LATER YOU SCRUB!!!. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and that was a small miracle. But why?">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://localhost:1313/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Tech Debt, Downtime, and Making Things",
+      "item": "http://localhost:1313/posts/tech-downtime-making/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Tech Debt, Downtime, and Making Things",
+  "name": "Tech Debt, Downtime, and Making Things",
+  "description": "In 15 years of work in information technology, I\u0026rsquo;ve inherited my fair share of baffling decisions. Here\u0026rsquo;s the thing, though: wild, confusing, and even downright borked configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I\u0026rsquo;m sure I\u0026rsquo;ve left plenty of head-scratching moments for my successors. That hospital\u0026rsquo;s network was a mess when I got there, and only less of one when I left. I\u0026rsquo;m sure there are routes I\u0026rsquo;ve put in that certainly go nowhere now, or there was that time I filled switchport descriptions with FIX THIS LATER YOU SCRUB!!!. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and that was a small miracle. But why?\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "In 15 years of work in information technology, I’ve inherited my fair share of baffling decisions. Here’s the thing, though: wild, confusing, and even downright borked configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I’m sure I’ve left plenty of head-scratching moments for my successors. That hospital’s network was a mess when I got there, and only less of one when I left. I’m sure there are routes I’ve put in that certainly go nowhere now, or there was that time I filled switchport descriptions with FIX THIS LATER YOU SCRUB!!!. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and that was a small miracle. But why?\nWe Make Things Here!! Well, not all of us. But the industry that I work in is, well, industrial manufacturing. One of the most interesting directors I’ve seen, who himself was a baffling decision engine, once said in a Teams call, “We make things here. Somebody get out to that site and get this working.”\nWell, duh we make things. Or we enable patient care. Or we let research partners collaborate on life-changing research in real time. We know this intrinsically, though we often feel a significant disconnect. The worst part about what this guy said was that it’s a valuable thing to remember, but he couched it in an absolute failure of management. In his hot-headed desire to keep uptime as up as up could be (he was helping the private equity firm prepare the company for sale), he ran long-term fixes and best practice through a meatgrinder of breakfix, heroic panic, and duct tape. Every decision was one that seemed to intentionally avoid 5 minutes of extra work to create days of productivity later. It was maddening.\nBut, as it turned out, even his seemingly wild ramblings had a purpose. That purpose simply wasn’t aligned with ours. We wanted a functional system that let the company produce as much profit as it could while maintaining a supportable, resilient security posture and setting trends for best practice. He wanted us to look like we were compliant with regulations so that we could be sold. Of course, he couldn’t tell us that, so, as so often happens in business, we were flying in the dark.\nThat’s not to say I think he was right, or even a good director. On the contrary, I found that, because the purpose of his decisions was never made known to us, his decisions were misaligned with both engineering and business goals. But, his decisions did have an internal logic. Not good logic, but logic, and logic can be worked out. We often forget to do that in our day to day jobs.\nBut I Fix Things How do I approach fixing this? Well, part of it is a people problem, the sort of thing I call a ‘meat space’ issue, rather than a ‘cyber space’ issue. We have to treat that one with care, teasing apart underlying personal needs carefully. Business needs are a little bit easier. Hopefully you’ve got SLAs. If not, it’s important to buy yourself some goodwill with small changes, little improvements to the business’s day to day. As you do this, you’ll earn the respect of not just your manager, but the company writ large. When you put in a request to correct a static route that forces traffic to cross two timezones just to return to where it started, or a ‘functional’ firewall rule that’s sinkholing a suspicious number of Windows Update MSIs, the business will trust that you’ve done your research.\nAnd do that research. Practice your project management skills, write up that document, and no matter how trivial you think that change is, give it the step-by-step treatment to the best of your ability. If you start calling the change ’trivial,’ you’re silencing anyone who might have questions. Even managers who come from a technical background might see huge swaths of what you do as space wizardry. If you write up enough of these well, and get good at it, then even when you’re being a space wizard, the folks catching the glow off your 100Gbps backbone links will assume, rightly, that you know what you’re doing. The questions will be less pointed, the trust will be high, and even when you make a mistake, you’ll have the goodwill to keep moving forward. After all, even space wizards get a command wrong sometimes.\n“The job got done, and nobody died,” is the bare minimum, but you can do so much better. Until next time, stay humble, and may your SLAs be ever un-breached.\n",
+  "wordCount" : "811",
+  "inLanguage": "en",
+  "datePublished": "2026-07-29T19:13:58-05:00",
+  "dateModified": "2026-07-29T19:13:58-05:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://localhost:1313/posts/tech-downtime-making/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Tyler Ulibarri | Infrastructure Systems Engineer",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://localhost:1313/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="Tyler Ulibarri | Infrastructure Systems Engineer (Alt + H)">Tyler Ulibarri | Infrastructure Systems Engineer</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Tech Debt, Downtime, and Making Things
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="35" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+    </h1>
+    <div class="post-meta">
+
+<span title='2026-07-29 19:13:58 -0500 CDT'>July 29, 2026</span>&nbsp;·&nbsp;<span>4 min</span>
+
+</div>
+  </header> 
+  <div class="post-content md-content"><p>In 15 years of work in information technology, I&rsquo;ve inherited my fair share of baffling decisions. Here&rsquo;s the thing, though: wild, confusing, and even downright <strong>borked</strong> configurations are never put in place due to pure, weapons-grade incompetence. They either seemed right at the time, fixed an issue that no other solution seemed to touch, or the result of pressure on an extremely tight time budget. And who am I to judge? I&rsquo;m sure I&rsquo;ve left plenty of head-scratching moments for my successors. That hospital&rsquo;s network was a mess when I got there, and only <em>less</em> of one when I left. I&rsquo;m sure there are routes I&rsquo;ve put in that certainly go nowhere now, or there was that time I filled switchport descriptions with <strong>FIX THIS LATER YOU SCRUB!!!</strong>. It took 18 months and some good-natured ribbing from my coworkers for me to get all those switchports fixed, and <em>that</em> was a small miracle. But why?</p>
+<h2 id="we-make-things-here">We Make Things Here!!<a hidden class="anchor" aria-hidden="true" href="#we-make-things-here">#</a></h2>
+<p>Well, not all of us. But the industry that I work in is, well, industrial manufacturing. One of the most <em>interesting</em> directors I&rsquo;ve seen, who himself was a baffling decision engine, once said in a Teams call, &ldquo;<strong>We make things here.</strong> Somebody get out to that site and get this working.&rdquo;</p>
+<p>Well, duh we make things. Or we enable patient care. Or we let research partners collaborate on life-changing research in real time. We know this intrinsically, though we often feel a significant disconnect. The worst part about what this guy said was that it&rsquo;s a valuable thing to remember, but he couched it in an absolute failure of management. In his hot-headed desire to keep uptime as up as up could be (he was helping the private equity firm prepare the company for sale), he ran long-term fixes and best practice through a meatgrinder of breakfix, heroic panic, and duct tape. Every decision was one that seemed to intentionally avoid 5 minutes of extra work to create days of productivity later. It was <em>maddening</em>.</p>
+<p>But, as it turned out, even <em>his</em> seemingly wild ramblings had a purpose. That purpose simply wasn&rsquo;t aligned with ours. We wanted a functional system that let the company produce as much profit as it could while maintaining a supportable, resilient security posture and setting trends for best practice. He wanted us to <em>look</em> like we were compliant with regulations so that we could be sold. Of course, he couldn&rsquo;t <em>tell</em> us that, so, as so often happens in business, we were flying in the dark.</p>
+<p>That&rsquo;s not to say I think he was <em>right</em>, or even a good director. On the contrary, I found that, because the purpose of his decisions was never made known to us, his decisions were misaligned with both engineering <em>and</em> business goals. But, his decisions <em>did</em> have an internal logic. Not good logic, but logic, and logic can be worked out. We often forget to do that in our day to day jobs.</p>
+<h2 id="but-i-fix-things">But <strong>I</strong> Fix Things<a hidden class="anchor" aria-hidden="true" href="#but-i-fix-things">#</a></h2>
+<p>How do I approach fixing this? Well, part of it is a people problem, the sort of thing I call a &lsquo;meat space&rsquo; issue, rather than a &lsquo;cyber space&rsquo; issue. We have to treat that one with care, teasing apart underlying personal needs carefully. Business needs are a little bit easier. Hopefully you&rsquo;ve got SLAs. If not, it&rsquo;s important to buy yourself some goodwill with small changes, little improvements to the business&rsquo;s day to day. As you do this, you&rsquo;ll earn the respect of not just your manager, but the company writ large. When you put in a request to correct a static route that forces traffic to cross two timezones just to return to where it started, or a &lsquo;functional&rsquo; firewall rule that&rsquo;s sinkholing a suspicious number of Windows Update MSIs, the business will trust that you&rsquo;ve done your research.</p>
+<p>And <strong>do</strong> that research. Practice your project management skills, write up that document, and no matter how trivial you think that change is, give it the step-by-step treatment to the best of your ability. If you start calling the change &rsquo;trivial,&rsquo; you&rsquo;re silencing anyone who might have questions. Even managers who come from a technical background might see huge swaths of what you do as space wizardry. If you write up enough of these well, and get good at it, then even when you&rsquo;re being a space wizard, the folks catching the glow off your 100Gbps backbone links will assume, rightly, that you know what you&rsquo;re doing. The questions will be less pointed, the trust will be high, and even when you make a mistake, you&rsquo;ll have the goodwill to keep moving forward. After all, even space wizards get a command wrong sometimes.</p>
+<p>&ldquo;The job got done, and nobody died,&rdquo; is the bare minimum, but you can do so much better. Until next time, stay humble, and may your SLAs be ever un-breached.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://localhost:1313/posts/tech-downtime-makingthings/">
+    <span class="title">Next »</span>
+    <span>Tech Debt, Downtime, and Making Things</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">Tyler Ulibarri | Infrastructure Systems Engineer</a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
